@@ -1,0 +1,13 @@
+    |64     |128    |256    < Memory Size
+4   |137k   |2k     |96
+16  |13     |5      |137k
+32  |177k   |13     |5
+64  |336k   |177k   |13
+^ Page Size
+
+Alright, you may be thinking: "what?"
+Yeah, I think it may be something to do with my bit math or my handling of the page numbering. Some of them are kinda close, if you squint. 
+But the exam is soon and I cannot spend too much time thinking about this when my partner won't even respond to me.
+So my analysis goes like this: The more pages there are in memory, i.e. the greater the disparity between memory size and page size, the more beneficial the output.
+There are many many page faults for 64/64. But for something like 256 (ideally...) there would be fewer page faults.
+This makes sense because page faults are caused by a lack of the page being stored in the table. Therefore, when there are many pages stored in the table, we get fewer of them.
