@@ -17,6 +17,11 @@
  */
 
 void Simulate(char f[], int mem_size, int page_size) {
+  
+  printf("File name: %s\n", f);
+  printf("Memory Size: %i\n", mem_size);
+  printf("Page Size: %i\n", page_size);
+
   //establish variables
   int place = 0;
   int faults = 0;
@@ -28,7 +33,7 @@ void Simulate(char f[], int mem_size, int page_size) {
     page_table[0][i] = -1;
     page_table[1][i] = 0;
   }
-  printf("%i", page_table[1][place]);
+  //printf("%i", page_table[1][place]);
 
   //open file for reading
   FILE *file = fopen(f, "r");
@@ -42,31 +47,33 @@ void Simulate(char f[], int mem_size, int page_size) {
     //variables
     char page[8];
     int page_bits = (int) log2((double) page_count);
-    printf("%i\n", page_bits);
+    //printf("%i\n", page_bits);
     memcpy(page, line, 8);
     page[8] = '\0';
-    printf("Page: %s\n", page);
 
     int i;
     int found = 0;
+    //printf("Page: %i\n", hexParse(page));
+
     for (i = 0; i < page_count; i++ ){
       //check for presence in table
-      if(hexParse(page) == page_table[0][i])
+      if(hexParse(page, page_bits) == page_table[0][i])
       {
-        printf("FOUND! %i %i\n", hexParse(page), page_table[0][i]);
+        //printf("FOUND! %i %i\n", hexParse(page, page_bits), page_table[0][i]);
         found = 1;
       }
     }
+
     //if not found
-    if(found = 0){
-      printf("NOT FOUND! %i %i\n", hexParse(page), page_table[0][i]);
+    if(found == 0){
+      //printf("NOT FOUND! %i %i\n", hexParse(page, page_bits), page_table[0][i]);
       faults++;
 
       while(1){
         //driving algorithm for second chance
         if(page_table[1][place] == 0){
           page_table[1][place] = 1;
-          page_table[0][place] = hexParse(page);
+          page_table[0][place] = hexParse(page, page_bits);
           break;
         } 
         else{
@@ -77,63 +84,53 @@ void Simulate(char f[], int mem_size, int page_size) {
       }
     }
   }
-  printf("%i", faults);
+  printf("Faults: %i\n", faults);
 
 
 }
 
-int hexParse(char page[]){
+//parses the hex of the address into something readable
+int hexParse(char page[], int bits){
   int count = 0;
   int page_sum = 0;
 
-  while(page[count]){
+  while(page[count] && bits >= 0){
 
     switch(page[count]){
-      case '0' : page_sum += 0;
+      case '0' : page_sum += (0 << bits);
         break;
-      case '1' : page_sum += 1;
+      case '1' : page_sum += (1 << bits);
         break;
-      case '2' : page_sum += 2;
+      case '2' : page_sum += (2 << bits);
         break;
-      case '3' : page_sum += 3;
+      case '3' : page_sum += (3 << bits);
         break;
-      case '4' : page_sum += 4;
+      case '4' : page_sum += (4 << bits);
         break;
-      case '5' : page_sum += 5;
+      case '5' : page_sum += (5 << bits);
         break;
-      case '6' : page_sum += 6;
+      case '6' : page_sum += (6 << bits);
         break;
-      case '7' : page_sum += 7;
+      case '7' : page_sum += (7 << bits);
         break;
-      case '8' : page_sum += 8;
+      case '8' : page_sum += (8 << bits);
         break;
-      case '9' : page_sum += 9;
+      case '9' : page_sum += (9 << bits);
         break;
-      case 'A' : page_sum += 10;
+      case 'a' : page_sum += (10 << bits);
         break;
-      case 'B' : page_sum += 11;
+      case 'b' : page_sum += (11 << bits);
         break;
-      case 'C' : page_sum += 12;
+      case 'c' : page_sum += (12 << bits);
         break;
-      case 'D' : page_sum += 13;
+      case 'd' : page_sum += (13 << bits);
         break;
-      case 'E' : page_sum += 14;
+      case 'e' : page_sum += (14 << bits);
         break;
-      case 'F' : page_sum += 15;
-        break;
-      case 'a' : page_sum += 10;
-        break;
-      case 'b' : page_sum += 11;
-        break;
-      case 'c' : page_sum += 12;
-        break;
-      case 'd' : page_sum += 13;
-        break;
-      case 'e' : page_sum += 14;
-        break;
-      case 'f' : page_sum += 15;
+      case 'f' : page_sum += (15 << bits);
         break;
     }
+    bits -= 4;
     count++;
   }
   return page_sum;
